@@ -15,6 +15,7 @@ public:
     Filter();
 
     void setFrequency(float frequency, float sampleRate);
+    void setQ(float q);
     float processSample(float sample);
 
 private:

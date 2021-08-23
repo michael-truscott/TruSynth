@@ -36,6 +36,14 @@ void Filter::setFrequency(float frequency, float sampleRate)
     }
 }
 
+void Filter::setQ(float q)
+{
+    if (m_q != q) {
+        m_q = q;
+        recalcCoefficients();
+    }
+}
+
 float Filter::processSample(float sample)
 {
     float result = sample;

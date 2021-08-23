@@ -70,6 +70,7 @@ public:
     juce::AudioParameterInt* osc2DetuneSemitones;
 
     juce::AudioParameterFloat* filterFrequency;
+    juce::AudioParameterFloat* filterResonance;
 
 private:
     WaveTable m_sinTable;
