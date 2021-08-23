@@ -12,6 +12,5 @@ Simple single-voice subtractive synthesizer written with JUCE &amp; C++
 
 ## TODO
 - Amplifier ADSR envelope
-- Filter resonance
 - Filter envelope amount
 - Multi-voice support?
