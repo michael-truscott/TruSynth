@@ -8,6 +8,7 @@ Simple single-voice subtractive synthesizer written with JUCE &amp; C++
   
 - Low pass filter
   - Adjustable cutoff threshold
+  - Resonance control
 
 ## TODO
 - Amplifier ADSR envelope
