@@ -11,6 +11,7 @@
 #pragma once
 
 #include <JuceHeader.h>
+#include "ParameterDefaults.h"
 
 //==============================================================================
 /*
@@ -56,6 +57,7 @@ public:
 
         levelSlider.setRange(m_level->range.start, m_level->range.end, 0.01f);
         levelSlider.setValue(m_level->get());
+        levelSlider.setDoubleClickReturnValue(true, ParamDefaults::oscLevel);
         levelSlider.onValueChange = [this] { *m_level = levelSlider.getValue(); };
         addAndMakeVisible(levelSlider);
 
@@ -65,6 +67,7 @@ public:
 
         detuneSlider.setRange(detuneCents->getRange().getStart(), detuneCents->getRange().getEnd(), 1.0f);
         detuneSlider.setValue(detuneCents->get());
+        detuneSlider.setDoubleClickReturnValue(true, ParamDefaults::oscDetuneCents);
         detuneSlider.setTextValueSuffix(" cents");
         detuneSlider.onValueChange = [this] { *m_detuneCents = detuneSlider.getValue(); };
         addAndMakeVisible(detuneSlider);
@@ -75,6 +78,7 @@ public:
 
         semitoneSlider.setRange(m_detuneSemitones->getRange().getStart(), m_detuneSemitones->getRange().getEnd(), 1.0f);
         semitoneSlider.setValue(m_detuneSemitones->get());
+        semitoneSlider.setDoubleClickReturnValue(true, ParamDefaults::oscDetuneSemitones);
         semitoneSlider.setTextValueSuffix(" semitones");
         semitoneSlider.onValueChange = [this] { *m_detuneSemitones = semitoneSlider.getValue(); };
         addAndMakeVisible(semitoneSlider);

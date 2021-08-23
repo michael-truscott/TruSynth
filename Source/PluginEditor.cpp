@@ -8,6 +8,7 @@
 
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
+#include "ParameterDefaults.h"
 
 //==============================================================================
 TruSynth2AudioProcessorEditor::TruSynth2AudioProcessorEditor (TruSynth2AudioProcessor& p) : AudioProcessorEditor (&p),
@@ -24,6 +25,7 @@ TruSynth2AudioProcessorEditor::TruSynth2AudioProcessorEditor (TruSynth2AudioProc
 
     masterVolumeSlider.setRange(audioProcessor.masterVolumeDb->range.start, audioProcessor.masterVolumeDb->range.end, 0.1f);
     masterVolumeSlider.setValue(audioProcessor.masterVolumeDb->get());
+    masterVolumeSlider.setDoubleClickReturnValue(true, ParamDefaults::masterVolume);
     masterVolumeSlider.setSkewFactorFromMidPoint(-24.0f);
     masterVolumeSlider.setTextValueSuffix(" dB");
     masterVolumeSlider.onValueChange = [this] { *audioProcessor.masterVolumeDb = masterVolumeSlider.getValue(); };

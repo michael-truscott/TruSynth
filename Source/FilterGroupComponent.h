@@ -11,6 +11,7 @@
 #pragma once
 
 #include <JuceHeader.h>
+#include "ParameterDefaults.h"
 
 //==============================================================================
 /*
@@ -28,6 +29,7 @@ public:
         addAndMakeVisible(frequencyLabel);
 
         frequencySlider.setRange(m_frequency.range.start, m_frequency.range.end, 1.0f);
+        frequencySlider.setDoubleClickReturnValue(true, ParamDefaults::filterFrequency);
         frequencySlider.setSkewFactorFromMidPoint(2000.0f);
         frequencySlider.setTextValueSuffix(" Hz");
         frequencySlider.setValue(m_frequency.get());
@@ -39,6 +41,7 @@ public:
         addAndMakeVisible(resonanceLabel);
 
         resonanceSlider.setRange(m_resonance.range.start, m_resonance.range.end, 0.01f);
+        resonanceSlider.setDoubleClickReturnValue(true, ParamDefaults::filterResonance);
         resonanceSlider.setValue(m_resonance.get());
         resonanceSlider.onValueChange = [this] {m_resonance = resonanceSlider.getValue(); };
         addAndMakeVisible(resonanceSlider);

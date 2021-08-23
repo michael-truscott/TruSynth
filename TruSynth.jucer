@@ -5,6 +5,8 @@
               pluginCharacteristicsValue="pluginIsSynth,pluginWantsMidiIn">
   <MAINGROUP id="V00Wrb" name="TruSynth">
     <GROUP id="{50FB280C-25A2-5AC6-8624-264DEB68B53F}" name="Source">
+      <FILE id="BRePAj" name="ParameterDefaults.h" compile="0" resource="0"
+            file="Source/ParameterDefaults.h"/>
       <FILE id="MEoreu" name="Filter.cpp" compile="1" resource="0" file="Source/Filter.cpp"/>
       <FILE id="iC2x2E" name="Filter.h" compile="0" resource="0" file="Source/Filter.h"/>
       <FILE id="i1lBSs" name="FilterGroupComponent.h" compile="0" resource="0"

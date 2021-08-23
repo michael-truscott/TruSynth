@@ -8,8 +8,9 @@
 
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
+#include "ParameterDefaults.h"
 
-static const float root2Over2 = juce::MathConstants<float>::sqrt2 / 2;
+
 
 //==============================================================================
 TruSynth2AudioProcessor::TruSynth2AudioProcessor()
@@ -32,7 +33,7 @@ TruSynth2AudioProcessor::TruSynth2AudioProcessor()
     , m_amplitude(0.0f)
     , masterVolumeDb(new juce::AudioParameterFloat("masterVolume", "Master Volume", -100.0f, 0.0f, -12.0f))
     , filterFrequency(new juce::AudioParameterFloat("filterFrequency", "Filter Frequency", 10.0f, 20000.0f, 4000.0f))
-    , filterResonance(new juce::AudioParameterFloat("filterResonance", "Filter Resonance", root2Over2, 10.0f, root2Over2))
+    , filterResonance(new juce::AudioParameterFloat("filterResonance", "Filter Resonance", ParamDefaults::filterResonance, 10.0f, ParamDefaults::filterResonance))
 
     , osc1WaveType(new juce::AudioParameterChoice("osc1WaveType", "Osc1 Wave Type", { "Sine", "Square", "Sawtooth" }, 2))
     , osc1Level(new juce::AudioParameterFloat("osc1Level", "Osc1 Level", 0.0f, 1.0f, 0.5f))
@@ -46,6 +47,7 @@ TruSynth2AudioProcessor::TruSynth2AudioProcessor()
 {
     addParameter(masterVolumeDb);
     addParameter(filterFrequency);
+    addParameter(filterResonance);
 
     addParameter(osc1WaveType);
     addParameter(osc1Level);
