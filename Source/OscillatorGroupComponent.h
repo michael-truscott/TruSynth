@@ -58,7 +58,7 @@ public:
         levelSlider.setRange(m_level->range.start, m_level->range.end, 0.01f);
         levelSlider.setValue(m_level->get());
         levelSlider.setDoubleClickReturnValue(true, ParamDefaults::oscLevel);
-        levelSlider.onValueChange = [this] { *m_level = levelSlider.getValue(); };
+        levelSlider.onValueChange = [this] { *m_level = (float)levelSlider.getValue(); };
         addAndMakeVisible(levelSlider);
 
         detuneLabel.setText("Detune", juce::NotificationType::dontSendNotification);
@@ -69,7 +69,7 @@ public:
         detuneSlider.setValue(detuneCents->get());
         detuneSlider.setDoubleClickReturnValue(true, ParamDefaults::oscDetuneCents);
         detuneSlider.setTextValueSuffix(" cents");
-        detuneSlider.onValueChange = [this] { *m_detuneCents = detuneSlider.getValue(); };
+        detuneSlider.onValueChange = [this] { *m_detuneCents = (float)detuneSlider.getValue(); };
         addAndMakeVisible(detuneSlider);
 
         semitoneLabel.setText("Pitch", juce::NotificationType::dontSendNotification);
@@ -80,7 +80,7 @@ public:
         semitoneSlider.setValue(m_detuneSemitones->get());
         semitoneSlider.setDoubleClickReturnValue(true, ParamDefaults::oscDetuneSemitones);
         semitoneSlider.setTextValueSuffix(" semitones");
-        semitoneSlider.onValueChange = [this] { *m_detuneSemitones = semitoneSlider.getValue(); };
+        semitoneSlider.onValueChange = [this] { *m_detuneSemitones = (int)semitoneSlider.getValue(); };
         addAndMakeVisible(semitoneSlider);
     }
 

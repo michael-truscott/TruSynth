@@ -33,7 +33,7 @@ public:
         frequencySlider.setSkewFactorFromMidPoint(2000.0f);
         frequencySlider.setTextValueSuffix(" Hz");
         frequencySlider.setValue(m_frequency.get());
-        frequencySlider.onValueChange = [this] { m_frequency = frequencySlider.getValue(); };
+        frequencySlider.onValueChange = [this] { m_frequency = (float)frequencySlider.getValue(); };
         addAndMakeVisible(frequencySlider);
 
         resonanceLabel.setText("Resonance (Q)", juce::NotificationType::dontSendNotification);
@@ -43,7 +43,7 @@ public:
         resonanceSlider.setRange(m_resonance.range.start, m_resonance.range.end, 0.01f);
         resonanceSlider.setDoubleClickReturnValue(true, ParamDefaults::filterResonance);
         resonanceSlider.setValue(m_resonance.get());
-        resonanceSlider.onValueChange = [this] {m_resonance = resonanceSlider.getValue(); };
+        resonanceSlider.onValueChange = [this] {m_resonance = (float)resonanceSlider.getValue(); };
         addAndMakeVisible(resonanceSlider);
     }
 

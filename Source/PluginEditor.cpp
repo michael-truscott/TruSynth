@@ -28,7 +28,7 @@ TruSynth2AudioProcessorEditor::TruSynth2AudioProcessorEditor (TruSynth2AudioProc
     masterVolumeSlider.setDoubleClickReturnValue(true, ParamDefaults::masterVolume);
     masterVolumeSlider.setSkewFactorFromMidPoint(-24.0f);
     masterVolumeSlider.setTextValueSuffix(" dB");
-    masterVolumeSlider.onValueChange = [this] { *audioProcessor.masterVolumeDb = masterVolumeSlider.getValue(); };
+    masterVolumeSlider.onValueChange = [this] { *audioProcessor.masterVolumeDb = (float)masterVolumeSlider.getValue(); };
     addAndMakeVisible(masterVolumeSlider);
 
     osc1Group.setText("Oscillator 1");
