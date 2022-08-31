@@ -11,10 +11,9 @@ Simple single-voice subtractive synthesizer written with JUCE &amp; C++
   - Resonance control
 
 ## Builds with
-- JUCE v6.0.8
-- Visual Studio/C++ 2019
+- JUCE v7.0.2
+- Visual Studio/C++ 2022
 
 ## TODO
-- Amplifier ADSR envelope
 - Filter envelope amount
 - Multi-voice support?
