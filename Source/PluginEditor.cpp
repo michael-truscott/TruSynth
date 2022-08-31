@@ -15,7 +15,8 @@ TruSynth2AudioProcessorEditor::TruSynth2AudioProcessorEditor (TruSynth2AudioProc
     audioProcessor (p),
     osc1Group(audioProcessor.osc1Level, audioProcessor.osc1DetuneSemitones, audioProcessor.osc1DetuneCents, audioProcessor.osc1WaveType),
     osc2Group(audioProcessor.osc2Level, audioProcessor.osc2DetuneSemitones, audioProcessor.osc2DetuneCents, audioProcessor.osc2WaveType),
-    filterGroup(*audioProcessor.filterFrequency, *audioProcessor.filterResonance)
+    filterGroup(*audioProcessor.filterFrequency, *audioProcessor.filterResonance),
+    ampEnvGroup(*audioProcessor.ampEnvAttack, *audioProcessor.ampEnvDecay, *audioProcessor.ampEnvSustain, *audioProcessor.ampEnvRelease)
 {
     setSize (800, 600);
 
@@ -39,6 +40,9 @@ TruSynth2AudioProcessorEditor::TruSynth2AudioProcessorEditor (TruSynth2AudioProc
 
     filterGroup.setText("Filter");
     addAndMakeVisible(filterGroup);
+
+    ampEnvGroup.setText("Amp Envelope");
+    addAndMakeVisible(ampEnvGroup);
 }
 
 TruSynth2AudioProcessorEditor::~TruSynth2AudioProcessorEditor()
@@ -59,4 +63,5 @@ void TruSynth2AudioProcessorEditor::resized()
     osc1Group.setBounds(20, 60, getWidth() - 40, 120);
     osc2Group.setBounds(20, 180, getWidth() - 40, 120);
     filterGroup.setBounds(20, 300, getWidth() - 40, 80);
+    ampEnvGroup.setBounds(20, 380, getWidth() - 40, 120);
 }

@@ -69,7 +69,7 @@ public:
         detuneSlider.setValue(detuneCents->get());
         detuneSlider.setDoubleClickReturnValue(true, ParamDefaults::oscDetuneCents);
         detuneSlider.setTextValueSuffix(" cents");
-        detuneSlider.onValueChange = [this] { *m_detuneCents = (float)detuneSlider.getValue(); };
+        detuneSlider.onValueChange = [this] { *m_detuneCents = (int)detuneSlider.getValue(); };
         addAndMakeVisible(detuneSlider);
 
         semitoneLabel.setText("Pitch", juce::NotificationType::dontSendNotification);

@@ -30,7 +30,9 @@ TruSynth2AudioProcessor::TruSynth2AudioProcessor()
     , m_osc1(&m_sawtoothTable)
     , m_osc2(&m_sawtoothTable)
     , m_currentMidiNote(-1)
-    , m_amplitude(0.0f)
+    , m_midiNoteActive(false)
+    , m_masterVolume(0.0f)
+    , m_ampEnvelope(ParamDefaults::ampEnvAttack, ParamDefaults::ampEnvDecay, ParamDefaults::ampEnvSustain, ParamDefaults::ampEnvRelease)
     , masterVolumeDb(new juce::AudioParameterFloat("masterVolume", "Master Volume", -100.0f, 0.0f, -12.0f))
     , filterFrequency(new juce::AudioParameterFloat("filterFrequency", "Filter Frequency", 10.0f, 20000.0f, 4000.0f))
     , filterResonance(new juce::AudioParameterFloat("filterResonance", "Filter Resonance", ParamDefaults::filterResonance, 10.0f, ParamDefaults::filterResonance))
@@ -44,6 +46,11 @@ TruSynth2AudioProcessor::TruSynth2AudioProcessor()
     , osc2Level(new juce::AudioParameterFloat("osc2Level", "Osc2 Level", 0.0f, 1.0f, 0.5f))
     , osc2DetuneCents(new juce::AudioParameterInt("osc2DetuneCents", "Osc2 Detune Cents", -100, 100, 10))
     , osc2DetuneSemitones(new juce::AudioParameterInt("osc2DetuneSemitones", "Osc2 Detune Semitones", -36, 36, 0))
+    
+    , ampEnvAttack(new juce::AudioParameterFloat("ampEnvAttack", "Amp Env Attack", 0.0f, 10.0f, ParamDefaults::ampEnvAttack))
+    , ampEnvDecay(new juce::AudioParameterFloat("ampEnvDecay", "Amp Env Decay", 0.0f, 10.0f, ParamDefaults::ampEnvAttack))
+    , ampEnvSustain(new juce::AudioParameterFloat("ampEnvSustain", "Amp Env Sustain", 0.0f, 1.0f, ParamDefaults::ampEnvSustain))
+    , ampEnvRelease(new juce::AudioParameterFloat("ampEnvRelease", "Amp Env Release", 0.0f, 10.0f, ParamDefaults::ampEnvRelease))
 {
     addParameter(masterVolumeDb);
     addParameter(filterFrequency);
@@ -58,6 +65,11 @@ TruSynth2AudioProcessor::TruSynth2AudioProcessor()
     addParameter(osc2Level);
     addParameter(osc2DetuneCents);
     addParameter(osc2DetuneSemitones);
+
+    addParameter(ampEnvAttack);
+    addParameter(ampEnvDecay);
+    addParameter(ampEnvSustain);
+    addParameter(ampEnvRelease);
 }
 
 TruSynth2AudioProcessor::~TruSynth2AudioProcessor()
@@ -168,14 +180,16 @@ bool TruSynth2AudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts
 void TruSynth2AudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
     juce::ScopedNoDenormals noDenormals;
-    auto totalNumInputChannels  = getTotalNumInputChannels();
+    //auto totalNumInputChannels  = getTotalNumInputChannels();
     auto totalNumOutputChannels = getTotalNumOutputChannels();
 
-    m_amplitude = juce::Decibels::decibelsToGain(masterVolumeDb->get());
-    m_filter.setFrequency(filterFrequency->get(), getSampleRate());
+    m_masterVolume = juce::Decibels::decibelsToGain(masterVolumeDb->get());
+    m_filter.setFrequency(filterFrequency->get(), (float)getSampleRate());
     m_filter.setQ(filterResonance->get());
+    m_ampEnvelope.setParams(ampEnvAttack->get(), ampEnvDecay->get(), ampEnvSustain->get(), ampEnvRelease->get());
     updateOscParams();
     auto nextMidiMessage = midiMessages.findNextSamplePosition(0);
+    double sampleTimeMs = 1.0 / getSampleRate();
     for (int i = 0; i < buffer.getNumSamples(); i++) {
         if (nextMidiMessage != midiMessages.cend() && (*nextMidiMessage).samplePosition == i) {
             auto midiMsg = (*nextMidiMessage).getMessage();
@@ -183,6 +197,7 @@ void TruSynth2AudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, ju
             nextMidiMessage = midiMessages.findNextSamplePosition(i+1);
         }
 
+        m_ampEnvelope.update(sampleTimeMs);
         float sample = getNextSample();
         for (int channel = 0; channel < totalNumOutputChannels; ++channel)
         {
@@ -193,16 +208,12 @@ void TruSynth2AudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, ju
 
 float TruSynth2AudioProcessor::getNextSample()
 {
-    // TODO: implement amp envelope
-    if (m_currentMidiNote < 0) {
-        return 0.0f;
-    }
-
+    float ampLevel = m_ampEnvelope.getValue();
     // sample the oscillators
     float osc1Sample = m_osc1.getNextSample();
     float osc2Sample = m_osc2.getNextSample();
 
-    float result = (osc1Sample + osc2Sample) * m_amplitude;
+    float result = (osc1Sample + osc2Sample) * (m_masterVolume * ampLevel);
     result = m_filter.processSample(result);
     return result;
 }
@@ -210,18 +221,21 @@ float TruSynth2AudioProcessor::getNextSample()
 void TruSynth2AudioProcessor::processMidiMessage(juce::MidiMessage& msg)
 {
     if (msg.isNoteOn()) {
-        if (m_currentMidiNote < 0) {
+        if (!m_midiNoteActive) {
             // restart the wave position to avoid a pop
             m_osc1.resetCycle();
             m_osc2.resetCycle();
         }
         m_currentMidiNote = msg.getNoteNumber();
         updateOscParams();
+        m_ampEnvelope.keyDown();
+        m_midiNoteActive = true;
     }
     else if (msg.isNoteOff()) {
         if (msg.getNoteNumber() == m_currentMidiNote) {
             // Only turn off the note if it was the most recently pressed one
-            m_currentMidiNote = -1;
+            m_midiNoteActive = false;
+            m_ampEnvelope.keyUp();
         }
     }
 }
@@ -230,12 +244,12 @@ void TruSynth2AudioProcessor::updateOscParams()
 {
     float noteFrequency = 440.0f * std::powf(2, ((float)m_currentMidiNote - 69) / 12);
 
-    float osc1PitchShiftCents = (osc1DetuneSemitones->get() * 100) + osc1DetuneCents->get();
+    int osc1PitchShiftCents = (osc1DetuneSemitones->get() * 100) + osc1DetuneCents->get();
     m_osc1.setFrequency(noteFrequency, osc1PitchShiftCents, (float)getSampleRate());
     m_osc1.setLevel(osc1Level->get());
     setOscWaveType(m_osc1, (WaveType)osc1WaveType->getIndex());
 
-    float osc2PitchShiftCents = (osc2DetuneSemitones->get() * 100) + osc2DetuneCents->get();
+    int osc2PitchShiftCents = (osc2DetuneSemitones->get() * 100) + osc2DetuneCents->get();
     m_osc2.setFrequency(noteFrequency, osc2PitchShiftCents, (float)getSampleRate());
     m_osc2.setLevel(osc2Level->get());
     setOscWaveType(m_osc2, (WaveType)osc2WaveType->getIndex());

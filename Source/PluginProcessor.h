@@ -12,6 +12,7 @@
 #include "WaveTable.h"
 #include "Oscillator.h"
 #include "Filter.h"
+#include "Envelope.h"
 
 //==============================================================================
 /**
@@ -72,12 +73,18 @@ public:
     juce::AudioParameterFloat* filterFrequency;
     juce::AudioParameterFloat* filterResonance;
 
+    juce::AudioParameterFloat* ampEnvAttack;
+    juce::AudioParameterFloat* ampEnvDecay;
+    juce::AudioParameterFloat* ampEnvSustain;
+    juce::AudioParameterFloat* ampEnvRelease;
+
 private:
     WaveTable m_sinTable;
     WaveTable m_squareTable;
     WaveTable m_sawtoothTable;
     Oscillator m_osc1, m_osc2;
     Filter m_filter;
+    Envelope m_ampEnvelope;
 
     void setOscWaveType(Oscillator& osc, WaveType waveType);
     void processMidiMessage(juce::MidiMessage& msg);
@@ -85,7 +92,8 @@ private:
     float getNextSample();
 
     int m_currentMidiNote;
-    float m_amplitude;
+    bool m_midiNoteActive;
+    float m_masterVolume;
 
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (TruSynth2AudioProcessor)

@@ -23,4 +23,9 @@ namespace ParamDefaults {
     const float oscLevel = 0.5f;
     const int oscDetuneCents = 0;
     const int oscDetuneSemitones = 0;
+
+    const float ampEnvAttack = 0;
+    const float ampEnvDecay = 0;
+    const float ampEnvSustain = 1;
+    const float ampEnvRelease = 0;
 }

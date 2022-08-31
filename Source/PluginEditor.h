@@ -12,6 +12,7 @@
 #include "PluginProcessor.h"
 #include "OscillatorGroupComponent.h"
 #include "FilterGroupComponent.h"
+#include "EnvelopeGroupComponent.h"
 
 //==============================================================================
 /**
@@ -36,6 +37,7 @@ private:
 
     OscillatorGroupComponent osc1Group, osc2Group;
     FilterGroupComponent filterGroup;
+    EnvelopeGroupComponent ampEnvGroup;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (TruSynth2AudioProcessorEditor)
 };

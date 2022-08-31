@@ -5,6 +5,8 @@
               pluginCharacteristicsValue="pluginIsSynth,pluginWantsMidiIn">
   <MAINGROUP id="V00Wrb" name="TruSynth">
     <GROUP id="{50FB280C-25A2-5AC6-8624-264DEB68B53F}" name="Source">
+      <FILE id="JAJ11Y" name="EnvelopeGroupComponent.h" compile="0" resource="0"
+            file="Source/EnvelopeGroupComponent.h"/>
       <FILE id="dcBHpz" name="Envelope.cpp" compile="1" resource="0" file="Source/Envelope.cpp"/>
       <FILE id="JubZY1" name="Envelope.h" compile="0" resource="0" file="Source/Envelope.h"/>
       <FILE id="BRePAj" name="ParameterDefaults.h" compile="0" resource="0"
